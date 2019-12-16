@@ -37,14 +37,33 @@ def remDupes(lst):
 
 asteroids = list(getAsteroids())
 maxCount = 0
-solution = None
+baseLoc = None
 
 for a in asteroids:
 	count = len(remDupes(getAstAngles(a, asteroids)))
 
 	if count > maxCount:
 		maxCount = count
-		solution = a
+		baseLoc = a
 
-print(maxCount)
-print(solution)
+asteroids.remove(baseLoc)
+angles = sorted(((angle(baseLoc, ast), ast) for ast in asteroids), key=lambda x: (x[0], abs(baseLoc[0] - x[1][0]) + abs(baseLoc[1] - x[1][1])))
+
+idx = 0
+prev = angles.pop(idx)
+prevAngle = prev[0]
+count = 1
+
+while count < 200 and angles:
+	if idx >= len(angles):
+		idx = 0
+		prevAngle = None
+	# Cannot shoot an asteroid behind another asteroid
+	if prevAngle == angles[idx][0]:
+		idx += 1
+		continue
+	prev = angles.pop(idx)
+	prevAngle = prev[0]
+	count += 1
+
+print(prev[1][0] * 100 + prev[1][1])
